@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include <unistd.h>
-#include "helpers.h"
+#include "../lib/helpers.h"
 
 #define BUF_SIZE 1024
 

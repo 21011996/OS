@@ -3,5 +3,5 @@ project(HomeWork1)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES lib/helpers.c lib/helpers.h cat/cat.c)
 add_executable(HomeWork1 ${SOURCE_FILES})
