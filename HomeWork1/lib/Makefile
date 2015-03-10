@@ -7,7 +7,7 @@ clean:
 	rm -f *.so
 
 libhelpers.so: helpers.o
-	gcc -shared -o libhelpers.so helpers.o
+	gcc -shared -o libhelpers.dll helpers.o
 
 helpers.o: helpers.c
 	gcc $(CFLAGS) -c helpers.c
