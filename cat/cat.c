@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "../lib/helpers.h"
+#include <unistd.h>
+#include "helpers.h"
 
 int main(int argc, char * argv[]) {
 
