@@ -61,9 +61,9 @@ int main() {
 
         for (int i = 0; i < bread; i++) {
             if (buffer[i] == ' ') {
-                if (wlength != 0) {
+                //if (wlength != 0) {
                     reverse();
-                }
+                //}
                 wlength = 0;
                 write_(STDOUT_FILENO, &WORDS_DELIMITER, 1);
             } else {
