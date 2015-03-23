@@ -10,7 +10,6 @@ size_t wlength = 0;
 const char WORDS_DELIMITER = ' ';
 
 char buffer[4096];
-char word[4096];
 
 char* itoa(int i, char b[]){
     char const digit[] = "0123456789";
@@ -32,21 +31,10 @@ char* itoa(int i, char b[]){
     return b;
 }
 
-void reverse() {
-    for (int i = 0; i < wlength / 2; i++) {
-        char temp = word[i];
-        word[i] = word[wlength - i - 1];
-        word[wlength - i - 1] = temp;
-    }
+void writelength(ssize_t wlength) {
     char length[4096];
-    itoa(wlength,length);
-    int a = wlength;
-    int b;
-    do{
-    	a*=10;
-    	b++;
-    } while (a>0);
-    write_(STDOUT_FILENO, length, b);
+    int a = sprintf(length, "%zu", wlength);
+    write_(STDOUT_FILENO, length, a);
 }
 
 int main() {
@@ -61,19 +49,17 @@ int main() {
 
         for (int i = 0; i < bread; i++) {
             if (buffer[i] == ' ') {
-                //if (wlength != 0) {
-                    reverse();
-                //}
+                writelength(wlength);
                 wlength = 0;
                 write_(STDOUT_FILENO, &WORDS_DELIMITER, 1);
             } else {
-                word[wlength++] = buffer[i];
+                wlength++;
             }
         }
     } while (bread > 0);
     
     if (wlength != 0) {
-        reverse();
+        writelength(wlength);
     }
 
     return 0;
