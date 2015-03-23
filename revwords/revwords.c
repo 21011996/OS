@@ -13,25 +13,27 @@ char buffer[4096];
 char word[4096];
 
 void reverse() {
-    for (int j = 0; j < wlength / 2; j++) {
-        char temp = word[j];
-        word[j] = word[wlength - j - 1];
-        word[wlength - j - 1] = temp;
+    for (int i = 0; i < wlength / 2; i++) {
+        char temp = word[i];
+        word[i] = word[wlength - i - 1];
+        word[wlength - i - 1] = temp;
     }
     write_(STDOUT_FILENO, word, wlength);
 }
 
 int main() {
-    while (1) {
-        ssize_t bread = read_until(STDIN_FILENO, buffer, BUF_SIZE, WORDS_DELIMITER);
-        if (bread < 0) {
-            fprintf(stderr, "%s\n", strerror(errno));            
+    ssize_t bread;
+    do
+    {
+    bread = (size_t) read_until(STDIN_FILENO, buffer, BUF_SIZE, ' ');
+        if (bread == -1) {
+            fprintf(stderr, "%s\n",strerror(errno));
             return 1;
         }
 
         for (int i = 0; i < bread; i++) {
-            if (buffer[i] == WORDS_DELIMITER) {
-                if (wlength > 0) {
+            if (buffer[i] == ' ') {
+                if (wlength != 0) {
                     reverse();
                 }
                 wlength = 0;
@@ -40,9 +42,9 @@ int main() {
                 word[wlength++] = buffer[i];
             }
         }
-    }
+    } while (bread > 0);
     
-    if (wlength > 0) {
+    if (wlength != 0) {
         reverse();
     }
 
