@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
+#include <sys/wait.h>
 #include <stddef.h>
 
 ssize_t read_until(int fd, void *buf, size_t count, char delimiter) {
@@ -59,4 +60,23 @@ ssize_t write_(int fd, const void *buf, size_t counter) {
         return -1;
     }
     return twritten;
+}
+
+int spawn(const char * file, char * const argv []) {
+    pit_t pid = fork();
+    int status = 0;
+    switch (pid) {
+        case -1:
+            status = -1;
+        case 0:
+            status = execv(file, argv);
+        default:
+            while (waitpid(childPid, &status, 0) == -1) {
+                if (errno != EINTR) {
+                    status = -1;
+                    break;
+                }
+            }
+    }
+    return status;
 }
