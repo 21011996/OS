@@ -64,19 +64,16 @@ ssize_t write_(int fd, const void *buf, size_t counter) {
 
 int spawn(const char * file, char * const argv []) {
     pid_t pid = fork();
-    int status = 0;
-    switch (pid) {
-        case -1:
-            status = -1;
-        case 0:
-            status = execv(file, argv);
-        default:
-            while (waitpid(pid, &status, 0) == -1) {
-                if (errno != EINTR) {
-                    status = -1;
-                    break;
-                }
-            }
+    int status;
+    if (pid == 0) {
+        execvp(file, argv);
+    } else if (pid > 0) {
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status)) {
+            return WEXITSTATUS(status);
+        } else {
+            return -1;
+        }
     }
-    return status;
+    return -1;
 }
