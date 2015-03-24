@@ -1,8 +1,8 @@
-#include <unistd.h>
+#include "helpers.h"
 #include <stdio.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <stddef.h>
+#include <sys/types.h>
 
 ssize_t read_until(int fd, void *buf, size_t count, char delimiter) {
     ssize_t tread = 0;
@@ -63,7 +63,7 @@ ssize_t write_(int fd, const void *buf, size_t counter) {
 }
 
 int spawn(const char * file, char * const argv []) {
-    pit_t pid = fork();
+    pid_t pid = fork();
     int status = 0;
     switch (pid) {
         case -1:
@@ -71,7 +71,7 @@ int spawn(const char * file, char * const argv []) {
         case 0:
             status = execv(file, argv);
         default:
-            while (waitpid(childPid, &status, 0) == -1) {
+            while (waitpid(pid, &status, 0) == -1) {
                 if (errno != EINTR) {
                     status = -1;
                     break;
