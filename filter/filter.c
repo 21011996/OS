@@ -2,17 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-char line[4097];
-size_t line_pos = 0;
-
+char line[4096];
+size_t pos = 0;
 char ** argvs;
 
+void println(int fd, const char * str) {
+    write_(fd, str, strlen(str));
+    char c = '\n';
+    write_(fd, &c, 1);
+}
+ 
 int main(int argc, char ** argv) {
-    char buf[4096];
-    size_t nread;
+    char buffer[4096];
+    size_t bread;
 
     if (argc < 2) {
-		write(STDERR_FILENO, "incorrect args\n", strlen("incorrect args\n"));
+        println(STDERR_FILENO, "No args were given");
         return 1;
     } else {
         argvs = malloc(sizeof(char *) * (argc + 1));
@@ -22,33 +27,29 @@ int main(int argc, char ** argv) {
         argvs[argc - 1] = line;
         argvs[argc] = NULL;
     }
-
+ 
     do {
-        nread = read_until(STDIN_FILENO, buf, sizeof(buf), '\n');
-
-        for (int i = 0; i < nread; i++) {
-            if (buf[i] == '\n') {
-                if (line_pos != 0) {
-                    line[line_pos] = 0;
+        bread = read_until(STDIN_FILENO, buffer, sizeof(buffer), '\n');
+        for (int i = 0; i < bread; i++) {
+            if (buffer[i] == '\n') {
+                if (pos != 0) {
+                    line[pos] = 0;
                     if (spawn(argvs[0], argvs) == 0) {
-						write(STDOUT_FILENO, line, strlen(str));
-						write(STDOUT_FILENO, '\n', 1);
-					}
+                        println(STDOUT_FILENO, line);
+                    }
                 }
-                line_pos = 0;
+                pos = 0;
             } else {
-                line[line_pos++] = buf[i];
+                line[pos++] = buffer[i];
             }
         }
-
-    } while (nread > 0);
-
-    if (line_pos != 0) {
-        line[line_pos] = 0;
+    } while (bread > 0);
+ 
+    if (pos != 0) {
+        line[pos] = 0;
         if (spawn(argvs[0], argvs) == 0) {
-			write(STDOUT_FILENO, line, strlen(str));
-			write(STDOUT_FILENO, '\n', 1);
-		}
+            println(STDOUT_FILENO, line);
+        }
     }
     free(argvs);
     return 0;
