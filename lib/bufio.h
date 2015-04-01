@@ -1,19 +1,23 @@
-#ifndef _BUFIO_
-#define _BUFIO_
+#ifndef _BUFIO_H_
+#define _BUFIO_H_
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef int fd_t;
 
 struct buf_t {
-    size_t size;
+    void * data;
     size_t capacity;
-    void * data;    
+    size_t size;
 };
 
-extern struct buf_t *buf_new(size_t capacity);
-extern void buf_free(struct buf_t *);
-extern size_t buf_capacity(struct buf_t *);
-extern size_t buf_size(struct buf_t *);
-extern ssize_t buf_fill(fd_t fd, struct buf_t *buf, size_t required);
-extern ssize_t buf_flush(fd_t fd, struct buf_t *buf, size_t required);
+struct buf_t * buf_new(size_t capacity);
+void buf_free(struct buf_t * buf);
+size_t buf_capacity(struct buf_t * buf);
+size_t buf_size(struct buf_t * buf);
+ssize_t buf_fill(fd_t fd, struct buf_t * buf, size_t required);
+ssize_t buf_flush(fd_t fd, struct buf_t * buf, size_t required);
 
 #endif
