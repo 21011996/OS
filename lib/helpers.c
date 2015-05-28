@@ -1,34 +1,10 @@
 #include "helpers.h"
+#include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stlib.h>
-#include <errno.h>
-#include <sys/wait.h>
 #include <sys/types.h>
-
-int exec(struct execargs_t * given) {
-	pid_t child_pid = fork();
-	given->args[given->args_cnt] = NULL;
-	if (child_pid == -1) {
-		return EXIT_FAILURE;
-	}
-	int status;
-	if (child_pid == 0) {
-		execvp(given->name, given->args);
-		_exit(EXIT_FAILURE);
-	} else {
-		do {
-			if (waitpid(child_pid, &status, 0) == -1) {
-				return EXIT_FAILURE;
-			}
-		} while (!WIFEXITED(status));
-	}
-	return WEXITSTATUS(status);
-}
-
-int runpiped(struct execargs_t ** programs, size_t n) {
-    //ololo x 2 - 1
-}
+#include <sys/wait.h>
+#include <string.h>
+#include <fcntl.h>
 
 ssize_t read_until(int fd, void *buf, size_t count, char delimiter) {
     ssize_t tread = 0;
@@ -102,4 +78,75 @@ int spawn(const char * file, char * const argv []) {
         }
     }
     return -1;
+}
+
+struct execargs_t new_args(int argc, char** argv)
+{
+    struct execargs_t result;
+    result.argv = (char**) malloc((argc + 1) * sizeof(char*));
+    int i;
+    for (i = 0; i < argc; i++) 
+        result.argv[i] = strdup(argv[i]); 
+    result.argv[argc] = NULL;
+    return result;
+}
+
+int exec(struct execargs_t * given) {
+	if (spawn(args->argv[0], args->argv) == -1)
+        return -1;
+    return 0;
+}
+
+int childcount;
+int* childarray;
+
+void killer(int sig) {
+	for (int i = 0; i < childcount; i++) 
+        kill(childarray[i], SIGKILL);
+    childcount = 0;
+}
+
+int runpiped(struct execargs_t ** programs, size_t n) {
+	if (n == 0)
+        return 0;
+	
+    int pipefd[n-1][2];
+	int pidarray[n];
+	
+	for (int i=0; i< n-1;i++) 
+        if (pipe2(pipefd[i],O_CLOEXEC)<0)
+            return -1;
+		
+	for (int i=0;i<n;i++) {
+		if (!(pidarray[i]=fork())) {
+            if (i!=0)
+				dup2(pipefd[i-1][0], STDIN_FILENO);
+			if (i!=n-1)
+				dup2(pipefd[i][1], STDOUT_FILENO);
+			_exit(execvp(programs[i]->argv[0], programs[i]->argv));	
+		}
+        if (pidarray[i]==-1)
+            return -1;
+	}
+	
+	for (int i = 0; i < n - 1; i++) {
+		close(pipefd[i][0]);
+		close(pipefd[i][1]);
+	}
+    
+    childcount=n;
+    childarray=(int*) pidarray;
+	
+    struct sigaction action;				//some one told that this is very bad(
+    memset(&action, '\0', sizeof(action));
+    action.sa_handler = &killer;
+   
+    if (sigaction(SIGINT, &action, NULL) < 0) 
+        return -1;
+
+	int status;
+	for (int i = 0; i < n; i++) 
+        waitpid(pidarray[i], &status, 0);
+    childcount = 0;
+    return 0;
 }

@@ -108,4 +108,10 @@ ssize_t buf_flush(fd_t fd, struct buf_t * buf, size_t required) {
     } else {
         return buf->size;
     }
+	
+
+}
+
+ssize_t buf_readuntil(fd_t fd, struct buf_t * buf, char delim) {
+ //need to add this
 }
