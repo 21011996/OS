@@ -1,7 +1,15 @@
 all:
-	$(MAKE) -C lib/
-	$(MAKE) -C cat/
-	$(MAKE) -C revwords/
-	$(MAKE) -C filter/
-	$(MAKE) -C bufcat/
-	$(MAKE) -C simplesh/
+	make -C lib 
+	make -C cat
+	make -C revwords
+	make -C filter
+	make -C bufcat
+	make -C simplesh
+
+clean:
+	make -C lib clean
+	make -C cat clean
+	make -C revwords clean
+	make -C filter clean
+	make -C bufcat clean
+	make -C simplesh clean

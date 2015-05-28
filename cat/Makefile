@@ -1,2 +1,6 @@
 all:
-	c99 -fPIC -Wall -o cat cat.c -L ../lib -lhelpers -Wl,-rpath=../lib -I ../lib
+	LD_LIBRARY_PATH="../lib"
+	gcc cat.c -L../lib/ -Wl,-rpath=../lib -lhelpers -o cat
+
+clean:
+	rm cat

@@ -1,10 +1,6 @@
-PATH_FLAGS = -I../lib -Wl,-rpath=../lib -L../lib
-
-all: revwords
+all:
+	LD_LIBRARY_PATH="../lib"
+	gcc revwords.c -L../lib/ -Wl,-rpath=../lib -lhelpers -o revwords
 
 clean:
-	rm -f *.o
-	rm -f revwords
-
-revwords: revwords.c
-	gcc -std=c99 $(PATH_FLAGS) revwords.c -o revwords -lhelpers
+	rm revwords

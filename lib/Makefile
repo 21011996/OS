@@ -1,3 +1,7 @@
-all:
+all:    
 	gcc -shared -g -o libhelpers.so -std=c99 -fPIC helpers.c
-	c99 -fPIC -Wall -shared bufio.c -o libbufio.so
+	gcc -shared -g -o libbufio.so -std=c99 -fPIC bufio.c
+
+clean:
+	rm -f libhelpers.so
+	rm -f libbufio.so
