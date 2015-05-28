@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 struct execargs_t {
-	char * prog;
+	char * name;
 	char * args[100];
 	int args_cnt;
 }

@@ -1,15 +1,33 @@
 #include "helpers.h"
+#include <unistd.h>
 #include <stdio.h>
+#include <stlib.h>
 #include <errno.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 
-int exec(struct execargs_t * args) {
-	//ololo
+int exec(struct execargs_t * given) {
+	pid_t child_pid = fork();
+	given->args[given->args_cnt] = NULL;
+	if (child_pid == -1) {
+		return EXIT_FAILURE;
+	}
+	int status;
+	if (child_pid == 0) {
+		execvp(given->name, given->args);
+		_exit(EXIT_FAILURE);
+	} else {
+		do {
+			if (waitpid(child_pid, &status, 0) == -1) {
+				return EXIT_FAILURE;
+			}
+		} while (!WIFEXITED(status));
+	}
+	return WEXITSTATUS(status);
 }
 
 int runpiped(struct execargs_t ** programs, size_t n) {
-    //ololo x 2
+    //ololo x 2 - 1
 }
 
 ssize_t read_until(int fd, void *buf, size_t count, char delimiter) {
