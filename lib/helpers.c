@@ -4,6 +4,14 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+int exec(struct execargs_t * args) {
+	//ololo
+}
+
+int runpiped(struct execargs_t ** programs, size_t n) {
+    //ololo x 2
+}
+
 ssize_t read_until(int fd, void *buf, size_t count, char delimiter) {
     ssize_t tread = 0;
     ssize_t bread = 0;
