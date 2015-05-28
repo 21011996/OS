@@ -64,14 +64,14 @@ int main() {
     while (1) {
         if (write_(STDOUT_FILENO, "$ ", 2)<1)
 			{
-				return 1
+				return 1;
 			}
         int pos = buf_readuntil(STDIN_FILENO, buf, '\n');
         if (pos == -2)
             return 0;
         if (pos == -3) {
             if (write_(STDOUT_FILENO, "\n$ ", 1)<1){
-				return 1
+				return 1;
 			}
             continue;
         }
@@ -92,12 +92,12 @@ int main() {
                 buffer += shift;
             }
             arguments[k] = (struct execargs_t*) malloc(sizeof(struct execargs_t));
-            *arguments[k] = create_args(argc, argv);  
+            *arguments[k] = new_args(argc, argv);  
             shift = get_delim(buffer, '|'); 
             buffer += shift;
             k++;
         }
-        buf->size -= (buffer - buf->data + 1);
+        buf->size -= (buffer - (char*) buf->data + 1);
         runpiped(arguments, k);
     }
     return 0;

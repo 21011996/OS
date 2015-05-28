@@ -125,7 +125,7 @@ ssize_t delim_lookup(char* buffer, int len, char delim) {
 ssize_t buf_readuntil(fd_t fd, struct buf_t * buf, char delim) {
 	ssize_t pos;
     int res;
-    while ((pos = delim_lookup(buf->buffer, buf->size, delim)) < 0) {
+    while ((pos = delim_lookup(buf->data, buf->size, delim)) < 0) {
         res = read(fd, buf->data + buf->size, buf->capacity - buf->size);
         if (res == 0)
             break;

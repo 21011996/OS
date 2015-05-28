@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include "helpers.h"
+#include "../lib/helpers.h"
 
 #define BUF_SIZE 4096
 

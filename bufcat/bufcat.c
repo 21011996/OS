@@ -1,4 +1,4 @@
-#include "bufio.h"
+#include "../lib/bufio.h"
 
 int main() {
     int returncode = 0;

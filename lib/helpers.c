@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "helpers.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -90,7 +91,7 @@ struct execargs_t new_args(int argc, char** argv)
 }
 
 int exec(struct execargs_t * args) {
-	if (spawn(args->argv[0], args->argv) == EXEC_FAILED)
+	if (spawn(args->argv[0], args->argv) == -1)
         return -1;
     return 0;
 }
@@ -129,7 +130,7 @@ int runpiped(struct execargs_t** programs, size_t n) {
 	}
     
     childcount = n;
-    childarray = (int*) child;
+    childarray = (int*) childpid;
 	
     struct sigaction act; //totally not copy pasted from net(
     memset(&act, '\0', sizeof(act));
