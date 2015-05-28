@@ -91,8 +91,8 @@ struct execargs_t new_args(int argc, char** argv)
     return result;
 }
 
-int exec(struct execargs_t * given) {
-	if (spawn(args->argv[0], args->argv) == -1)
+int exec(struct execargs_t * argc) {
+	if (spawn(argc->argv[0], args->argv) == -1)
         return -1;
     return 0;
 }
@@ -100,7 +100,7 @@ int exec(struct execargs_t * given) {
 int childcount;
 int* childarray;
 
-void killer(int sig) {
+void pid_close(int sig) {
 	for (int i = 0; i < childcount; i++) 
         kill(childarray[i], SIGKILL);
     childcount = 0;
@@ -139,7 +139,7 @@ int runpiped(struct execargs_t ** programs, size_t n) {
 	
     struct sigaction action;				//some one told that this is very bad(
     memset(&action, '\0', sizeof(action));
-    action.sa_handler = &killer;
+    action.sa_handler = &pid_close;
    
     if (sigaction(SIGINT, &action, NULL) < 0) 
         return -1;
